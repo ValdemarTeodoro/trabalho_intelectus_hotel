@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Cadastro de Vendas</title>
+<link rel="stylesheet" type="text/css" href="css/bg.css" />
+            <style type="text/css">
+                .ui-widget{font-size:90% !important;}
+            </style>
+</h:head>
+<h:body>
+	<h:form>
+		<p:growl />
+		<p:menubar>
+		<p:submenu label="Menu de Cadastros">
+			<p:menuitem value="Cliente" outcome="cadastroCliente"/>
+			<p:menuitem value="Locação" outcome="cadastroLocacao"/>
+			<p:menuitem value="Produto" outcome="cadastroProduto"/>
+			<p:menuitem value="Vendas" outcome="vendaProduto"/>
+		</p:submenu>
+		</p:menubar>
+		<p:panel header="VENDA">
+			<h:panelGrid columns="2">
+				<h:outputText value="CPF do Cliente: *" />
+				<p:selectOneMenu filter="true"
+					value="#{vendaController.clienteSelecionado}" required="true"
+					requiredMessage="O campo CPF do Cliente é obrigatório"
+					converter="clienteConverter">
+					<f:selectItem itemLabel="SELECIONE" />
+					<f:selectItems value="#{clienteController.lista}" var="cliente"
+						itemLabel="#{cliente.cpf}" itemValue="#{cliente}" />
+				</p:selectOneMenu>
+
+				<h:outputText value="Produto: *" />
+				<p:selectOneMenu filter="true"
+					value="#{vendaController.produtoSelecionado}" required="true"
+					requiredMessage="O campo produto é obrigatório"
+					converter="produtoConverter">
+					<f:selectItem itemLabel="SELECIONE" />
+					<f:selectItems value="#{produtoController.lista}" var="produto"
+						itemLabel="#{produto.nomeProduto}" itemValue="#{produto}" />
+				</p:selectOneMenu>
+				
+				<h:outputText value="Quantidade"/>
+				<p:inputText value="#{vendaController.venda.quantidade}"
+					required="true" requiredMessage="O campo quantidade é obrigatório!"/>
+				
+				<p:commandButton value="Salvar" action="#{vendaController.salvar}" ajax="false"/>
+				<p:commandButton value="Limpar" action="vendaProduto.xhtml" actionListener="#{vendaController.limparCampos}" ajax="false"/>
+		</h:panelGrid>
+		</p:panel>
+	</h:form>
+	<br />
+	<br />
+	<h:form>
+		<p:growl />
+		<p:panel header="Lista de Vendas">
+			<p:dataTable value="#{vendaController.lista}" var="venda">
+				
+				<p:column headerText="Data da Venda">
+					<center>
+						<h:outputText value="#{venda.dataVenda}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Nome do Cliente">
+					<center>
+						<h:outputText value="#{venda.cliente.nome}" />
+					</center>
+				</p:column>
+				<p:column headerText="Sobrenome">
+					<center>
+						<h:outputText value="#{venda.cliente.sobrenome}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Cpf do Cliente">
+					<center>
+						<h:outputText value="#{venda.cliente.cpf}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Produto">
+					<center>
+						<h:outputText value="#{venda.produto.nomeProduto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Valor Unitário">
+					<center>
+						<h:outputText value="#{venda.produto.valor}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Quantidade">
+					<center>
+						<h:outputText value="#{venda.quantidade}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Valor Total">
+					<center>
+						<h:outputText value="#{venda.valorTotal}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton value="Editar" action="#{vendaController.editar}" ajax="false">
+							<f:setPropertyActionListener value="#{venda}" target="#{vendaController.venda}" />
+						</p:commandButton>
+						<p:commandButton value="Excluir" onclick="return confrim('Confrima a exclusão?')" action="#{vendaController.excluir}" ajax="false">
+							<f:setPropertyActionListener value="#{venda}" target="#{vendaController.venda}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

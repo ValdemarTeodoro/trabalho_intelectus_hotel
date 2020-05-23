@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Cadastro de Locação</title>
+<link rel="stylesheet" type="text/css" href="css/bg.css" />
+            <style type="text/css">
+                .ui-widget{font-size:90% !important;}
+            </style>
+</h:head>
+<h:body>
+	<h:form>
+		<p:growl />
+		<p:menubar>
+		<p:submenu label="Menu de Cadastros">
+			<p:menuitem value="Cliente" outcome="cadastroCliente"/>
+			<p:menuitem value="Locação" outcome="cadastroLocacao"/>
+			<p:menuitem value="Produto" outcome="cadastroProduto"/>
+			<p:menuitem value="Vendas" outcome="vendaProduto"/>
+		</p:submenu>
+		</p:menubar>
+		<p:panel header="LOCACÃO">
+			<h:panelGrid columns="2">
+				<h:outputText value="CPF do Cliente: *" />
+				<p:selectOneMenu filter="true"
+					value="#{locacaoController.clienteSelecionado}" required="true"
+					requiredMessage="O campo CPF do Cliente é obrigatório"
+					converter="clienteConverter">
+					<f:selectItem itemLabel="SELECIONE" />
+					<f:selectItems value="#{clienteController.lista}" var="cliente"
+						itemLabel="#{cliente.cpf}" itemValue="#{cliente}" />
+				</p:selectOneMenu>
+
+				<h:outputText value="Quarto: *" />
+				<p:selectOneMenu filter="true"
+					value="#{locacaoController.quartoSelecionado}" required="true"
+					requiredMessage="O campo quarto do Cliente é obrigatório"
+					converter="quartoConverter">
+					<f:selectItem itemLabel="SELECIONE" />
+					<f:selectItems value="#{quartoController.lista}" var="quarto"
+						itemLabel="#{quarto.numeroQuarto}" itemValue="#{quarto}" />
+				</p:selectOneMenu>
+
+				<h:outputText value="Status: *" />
+				<p:selectOneMenu filter="true"
+					value="#{locacaoController.statusSelecionado}" required="true"
+					requiredMessage="O campo status é obrigatório"
+					converter="statusConverter">
+					<f:selectItem itemLabel="SELECIONE" />
+					<f:selectItems value="#{statusController.lista}" var="status"
+						itemLabel="#{status.descricao}" itemValue="#{status}" />
+				</p:selectOneMenu>
+
+				<h:outputText value="Data de Entrada" />
+				<p:calendar pattern="dd/MM/yyyy"
+					value="#{locacaoController.locacao.dataEntrada}" required="true"
+					requiredMessage="O campo data entrada é obrigatório!">
+					<f:convertDateTime pattern="dd/MM/yyyy"
+						timeZone="America/Sao_Paulo" />
+				</p:calendar>
+
+				<h:outputText value="Data possível de saída" />
+				<p:calendar pattern="dd/MM/yyyy"
+					value="#{locacaoController.locacao.dataPrevisaoSaida}"
+					required="true"
+					requiredMessage="O campo data pevisão de saída é obrigatório!">
+					<f:convertDateTime pattern="dd/MM/yyyy"
+						timeZone="America/Sao_Paulo" />
+				</p:calendar>
+
+				<p:commandButton value="Check-in"
+					action="#{locacaoController.salvar}" onclick="return confirm('Confirma que todos os dados estão certos?')" ajax="false" >
+				</p:commandButton>
+			
+				<p:commandButton value="Limpar" action="cadastroLocacao.xhtml"
+					actionListener="#{locacaoController.limparCampos}" ajax="false" />
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+	<br />
+	<br />
+	<h:form>
+		<p:growl />
+		<p:panel header="LiISTA DE QUARTOS ALUGADOS">
+			<p:dataTable value="#{locacaoController.listaAlugados}" var="locacoes">
+
+				<p:column headerText="Nome do Cliente">
+					<center>
+						<h:outputText value="#{locacoes.cliente.nome}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Cpf do Cliente">
+					<center>
+						<h:outputText value="#{locacoes.cliente.cpf}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Número do Quarto">
+					<center>
+						<h:outputText value="#{locacoes.quarto.numeroQuarto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Status do Quarto">
+					<center>
+						<h:outputText value="#{locacoes.status.descricao}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Data de Entrada">
+					<center>
+						<h:outputText value="#{locacoes.dataEntrada}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Data previsão de saída">
+					<center>
+						<h:outputText value="#{locacoes.dataPrevisaoSaida}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton value="Editar" action="#{locacaoController.editar}" ajax="false">
+							<f:setPropertyActionListener value="#{locacoes}" target="#{locacaoController.locacao}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+				<p:column headerText="Check-out">
+					<center>
+						<p:commandButton value="Check-out"
+							action="#{locacaoController.editar}" >
+							<f:setPropertyActionListener value="#{locacoes}"
+								target="#{locacaoController.locacao}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	<br/>
+	<br/>
+	<br/>
+	<h:form>
+		<p:growl />
+		<p:panel header="LISTA DE QUARTOS RESERVADOS">
+			<p:dataTable value="#{locacaoController.listaReservados}" var="locacoes">
+
+				<p:column headerText="Nome do Cliente">
+					<center>
+						<h:outputText value="#{locacoes.cliente.nome}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Cpf do Cliente">
+					<center>
+						<h:outputText value="#{locacoes.cliente.cpf}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Número do Quarto">
+					<center>
+						<h:outputText value="#{locacoes.quarto.numeroQuarto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Status do Quarto">
+					<center>
+						<h:outputText value="#{locacoes.status.descricao}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Data de Entrada">
+					<center>
+						<h:outputText value="#{locacoes.dataEntrada}" />
+					</center>
+				</p:column>
+				
+				<p:column headerText="Data previsão de saída">
+					<center>
+						<h:outputText value="#{locacoes.dataPrevisaoSaida}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Ação">
+					<center>
+						<p:commandButton value="Alugar" action="#{locacaoController.alugar}" ajax="false">
+							<f:setPropertyActionListener value="#{locacoes}" target="#{locacaoController.locacao}" />
+						</p:commandButton>
+						<p:commandButton value="Excluir" onclick="return confirm('Confirma a exclusão?')" action="#{locacaoController.excluir}" ajax="false">
+							<f:setPropertyActionListener value="#{locacoes}"
+								target="#{locacaoController.locacao}" />
+						</p:commandButton>
+					</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	<br />
+	<br />
+	<h:form>
+		<p:growl />
+		<p:panel header="Tabela de Preços de Quartos" toggleable="true">
+			<p:dataTable value="#{quartoController.lista}" var="quarto" paginator="true" rows="10">
+
+				<p:column headerText="Número">
+					<center>
+						<h:outputText value="#{quarto.numeroQuarto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Quarto">
+					<center>
+						<h:outputText value="#{quarto.tipoQuarto}" />
+					</center>
+				</p:column>
+
+				<p:column headerText="Valor do Quarto">
+					<center>
+						<h:outputText value="#{quarto.valorQuarto}" />
+					</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>
